@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego Multiplayer con Firebase</title>
+    <title>Juego Multiplayer Gratuito</title>
     <style>
         :root {
             --bg-color: #121214;
@@ -177,7 +177,6 @@
         </div>
     </div>
     <!-- Importar Firebase desde CDN -->
-    <!-- Importar Firebase desde CDN -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getDatabase, ref, set, onValue, onDisconnect } from "https://gstatic.com";
@@ -191,7 +190,7 @@
         // Contraseña oculta en Base64 (Equivale a "admin1029384756")
         const ADMIN_PASSWORD_HASH = "YWRtaW4xMDI5Mzg0NzU2"; 
 
-        // Lista global donde se guardarán los nombres reales de tus imágenes
+        // Lista global donde se guardarán los nombres de tus imágenes
         let IMAGE_POOL_LIST = []; 
 
         // Inicializar Firebase con los datos procesados
@@ -205,15 +204,15 @@
         // Generar un ID local único
         myUser.id = 'p_' + Math.random().toString(36).substr(2, 9);
 
-        // FUNCIÓN AUTOMÁTICA: Carga la lista personalizada de imágenes desde el archivo JSON
+        // FUNCIÓN AUTOMÁTICA: Carga la lista personalizada de imágenes generada por tu GitHub Action
         async function loadImagesFromJSON() {
             try {
                 const response = await fetch('./imagenes.json');
                 if (response.ok) {
                     IMAGE_POOL_LIST = await response.json();
-                    console.log(`[Sistema] Se cargaron ${IMAGE_POOL_LIST.length} imágenes personalizadas desde imagenes.json`);
+                    console.log(`[Sistema] Se cargaron ${IMAGE_POOL_LIST.length} imágenes dinámicamente.`);
                 } else {
-                    console.error("No se encontró el archivo imagenes.json en la raíz.");
+                    console.error("No se encontró el archivo imagenes.json en la raíz. Asegúrate de que el robot de GitHub ya lo haya generado.");
                 }
             } catch (error) {
                 console.error("Error al leer el archivo de imágenes:", error);
@@ -223,7 +222,7 @@
         // Ejecutar la carga del JSON inmediatamente al abrir la página
         loadImagesFromJSON();
 
-        // Escuchar cambios globales en el estado del juego
+        // Escuchar cambios globales en el estado del juego en Realtime Database
         onValue(ref(db, 'gameState'), (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
@@ -313,11 +312,10 @@
             if (activePlayers.length === 0) return;
             
             if (IMAGE_POOL_LIST.length === 0) {
-                alert("El archivo imagenes.json está vacío o no ha terminado de cargar.");
+                alert("La lista de imágenes está vacía. Añade fotos en tu carpeta /img/ dentro de GitHub.");
                 return;
             }
 
-            // Clonamos la lista original para mezclar los nombres de archivos reales
             let shuffledPool = [...IMAGE_POOL_LIST];
 
             // Algoritmo Fisher-Yates (Mezclado de nombres)
@@ -329,7 +327,6 @@
             let assignments = {};
             activePlayers.forEach((player, index) => {
                 let imgIndex = index % shuffledPool.length;
-                // Guardamos directamente el nombre del archivo asignado (ej. "atardecer.png")
                 assignments[player.id] = shuffledPool[imgIndex];
             });
 
@@ -345,7 +342,6 @@
             const gamePage = document.getElementById('page-game');
             const imgElement = document.getElementById('display-image');
             
-            // Apunta directamente a la carpeta /img/ usando el nombre real guardado
             imgElement.src = `./img/${myImageName}`;
             gamePage.classList.remove('hidden');
 
