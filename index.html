@@ -246,6 +246,7 @@
             }
         });
 
+        // ASIGNACIÓN GLOBAL DIRECTA (Corregido para habilitar el botón HTML)
         window.login = function() {
             const nameInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value;
@@ -312,7 +313,7 @@
             if (activePlayers.length === 0) return;
             
             if (IMAGE_POOL_LIST.length === 0) {
-                alert("La lista de imágenes está vacía. Añade fotos en tu carpeta /img/ dentro de GitHub.");
+                alert("La lista de imágenes está vacía o el archivo 'imagenes.json' no se ha generado en GitHub. Asegúrate de añadir fotos en tu carpeta /img/.");
                 return;
             }
 
