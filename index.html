@@ -176,58 +176,45 @@
             <button class="btn-danger" onclick="endSession()">Concluir Sesión</button>
         </div>
     </div>
-    <!-- Importar Firebase desde CDN -->
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getDatabase, ref, set, onValue, onDisconnect } from "https://gstatic.com";
+    <!-- Importar scripts clásicos (Compat) de Firebase vía CDN -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
 
+    <script>
         // Cadena de Firebase codificada para proteger el texto plano
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhedWJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
-
-        // Decodificar la configuración en tiempo de ejecución de manera automática
         const firebaseConfig = JSON.parse(atob(datosOcultos));
-
-        // Contraseña oculta en Base64 (Equivale a "admin1029384756")
         const ADMIN_PASSWORD_HASH = "YWRtaW4xMDI5Mzg0NzU2"; 
 
-        // Lista global donde se guardarán los nombres de tus imágenes
         let IMAGE_POOL_LIST = []; 
-
-        // Inicializar Firebase con los datos procesados
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
         let myUser = { id: '', name: '', isAdmin: false };
         let activePlayers = [];
         let myPlayerRef = null;
 
-        // Generar un ID local único
+        // Inicializar Firebase usando la API clásica global
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         myUser.id = 'p_' + Math.random().toString(36).substr(2, 9);
 
-        // FUNCIÓN AUTOMÁTICA: Carga la lista personalizada de imágenes generada por tu GitHub Action
         async function loadImagesFromJSON() {
             try {
                 const response = await fetch('./imagenes.json');
                 if (response.ok) {
                     IMAGE_POOL_LIST = await response.json();
-                    console.log(`[Sistema] Se cargaron ${IMAGE_POOL_LIST.length} imágenes dinámicamente.`);
-                } else {
-                    console.error("No se encontró el archivo imagenes.json en la raíz. Asegúrate de que el robot de GitHub ya lo haya generado.");
+                    console.log(`[Sistema] Se cargaron ${IMAGE_POOL_LIST.length} imágenes.`);
                 }
             } catch (error) {
-                console.error("Error al leer el archivo de imágenes:", error);
+                console.error("Error al leer imagenes.json:", error);
             }
         }
-
-        // Ejecutar la carga del JSON inmediatamente al abrir la página
         loadImagesFromJSON();
 
-        // Escuchar cambios globales en el estado del juego en Realtime Database
-        onValue(ref(db, 'gameState'), (snapshot) => {
+        // Escuchar el estado de la base de datos en tiempo real
+        db.ref('gameState').on('value', (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
 
-            // 1. Sincronizar Lista de Jugadores
             if (state.players) {
                 activePlayers = Object.values(state.players);
                 renderLobby();
@@ -236,7 +223,6 @@
                 renderLobby();
             }
 
-            // 2. Control de flujos de pantalla según órdenes del Admin
             if (state.status === 'LOGIN' && myUser.name) {
                 resetToLoginLocal();
             } else if (state.status === 'GAME' && myUser.name) {
@@ -246,8 +232,8 @@
             }
         });
 
-        // ASIGNACIÓN GLOBAL DIRECTA (Corregido para habilitar el botón HTML)
-        window.login = function() {
+        // Función de acceso inmediato para el botón onclick
+        function login() {
             const nameInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value;
 
@@ -259,10 +245,9 @@
             myUser.name = nameInput;
             if (passInput === atob(ADMIN_PASSWORD_HASH)) myUser.isAdmin = true;
 
-            myPlayerRef = ref(db, `gameState/players/${myUser.id}`);
-            set(myPlayerRef, myUser);
-
-            onDisconnect(myPlayerRef).remove();
+            myPlayerRef = db.ref(`gameState/players/${myUser.id}`);
+            myPlayerRef.set(myUser);
+            myPlayerRef.onDisconnect().remove();
 
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-lobby').classList.remove('hidden');
@@ -270,9 +255,9 @@
             if (myUser.isAdmin) {
                 document.getElementById('admin-lobby-controls').classList.remove('hidden');
                 document.getElementById('player-wait-msg').classList.add('hidden');
-                set(ref(db, 'gameState/status'), 'LOBBY');
+                db.ref('gameState/status').set('LOBBY');
             }
-        };
+        }
 
         function renderLobby() {
             const container = document.getElementById('player-list-container');
@@ -286,13 +271,13 @@
             });
         }
 
-        window.cancelMatch = function() {
-            set(ref(db, 'gameState'), { status: 'LOGIN' });
-        };
+        function cancelMatch() {
+            db.ref('gameState').set({ status: 'LOGIN' });
+        }
 
-        window.endSession = function() {
-            set(ref(db, 'gameState'), { status: 'LOGIN' });
-        };
+        function endSession() {
+            db.ref('gameState').set({ status: 'LOGIN' });
+        }
 
         function resetToLoginLocal() {
             document.getElementById('page-lobby').classList.add('hidden');
@@ -306,20 +291,18 @@
             document.getElementById('password').value = '';
             myUser.name = '';
             myUser.isAdmin = false;
-            if (myPlayerRef) myPlayerRef = null;
+            myPlayerRef = null;
         }
 
-        window.startMatch = function() {
+        function startMatch() {
             if (activePlayers.length === 0) return;
             
             if (IMAGE_POOL_LIST.length === 0) {
-                alert("La lista de imágenes está vacía o el archivo 'imagenes.json' no se ha generado en GitHub. Asegúrate de añadir fotos en tu carpeta /img/.");
+                alert("La lista de imágenes está vacía en imagenes.json.");
                 return;
             }
 
             let shuffledPool = [...IMAGE_POOL_LIST];
-
-            // Algoritmo Fisher-Yates (Mezclado de nombres)
             for (let i = shuffledPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
@@ -331,9 +314,9 @@
                 assignments[player.id] = shuffledPool[imgIndex];
             });
 
-            set(ref(db, 'gameState/assignments'), assignments);
-            set(ref(db, 'gameState/status'), 'GAME');
-        };
+            db.ref('gameState/assignments').set(assignments);
+            db.ref('gameState/status').set('GAME');
+        }
 
         function showGameImage(assignments) {
             const myImageName = assignments[myUser.id];
@@ -355,9 +338,9 @@
             }
         }
 
-        window.nextRound = function() {
-            window.startMatch();
-        };
+        function nextRound() {
+            startMatch();
+        }
     </script>
 </body>
 </html>
