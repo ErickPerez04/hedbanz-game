@@ -1,0 +1,44 @@
+name: Generar Lista de Imagenes Automaticamente
+
+on:
+  push:
+    paths:
+      - 'img/**' # Se activa solo cuando subes o borras fotos en la carpeta img
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Generar archivo imagenes.json
+      run: |
+        echo "[" > imagenes.json
+        first=true
+        # Recorre todos los archivos dentro de la carpeta img
+        for file in img/*; do
+          if [ -f "$file" ]; then
+            # Extrae solo el nombre del archivo (ej. "foto.png")
+            filename=$(basename "$file")
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo "," >> imagenes.json
+            fi
+            echo "  \"$filename\"" >> imagenes.json
+          fi
+        done
+        echo "]" >> imagenes.json
+
+    - name: Subir cambios automaticamente a GitHub
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        git add imagenes.json
+        # Solo hace commit si el archivo realmente cambió
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Bot: imagenes.json actualizado automaticamente" && git push)
