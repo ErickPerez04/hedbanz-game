@@ -176,7 +176,7 @@
             <button class="btn-danger" onclick="endSession()">Concluir Sesión</button>
         </div>
     </div>
-    <!-- Importar scripts clásicos (Compat) de Firebase vía CDN -->
+    <!-- 1. Cargar las librerías clásicas globales de Firebase vía CDN -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 
@@ -191,12 +191,13 @@
         let activePlayers = [];
         let myPlayerRef = null;
 
-        // Inicializar Firebase usando la API clásica global
+        // 2. Inicializar Firebase globalmente de forma segura
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         myUser.id = 'p_' + Math.random().toString(36).substr(2, 9);
 
+        // Cargar el JSON generado automáticamente por tu robot de GitHub Actions
         async function loadImagesFromJSON() {
             try {
                 const response = await fetch('./imagenes.json');
@@ -232,7 +233,7 @@
             }
         });
 
-        // Función de acceso inmediato para el botón onclick
+        // 3. Función global de entrada vinculada directamente al click del HTML
         function login() {
             const nameInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value;
