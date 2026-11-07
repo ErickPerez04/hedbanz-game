@@ -38,17 +38,18 @@
         <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
     </div>
 
-    <!-- Importación modular unpkg libre de restricciones CORS -->
-    <script type="module">
-        import { initializeApp } from "https://unpkg.com";
-        import { getDatabase, ref, set, onValue, onDisconnect } from "https://unpkg.com";
+    <!-- Cargar Firebase App y Database con SDK Clásico via CDN unpkg libre de módulos -->
+    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com"></script>
 
-        // Tus datos ocultos actualizados y corregidos
+    <script>
+        // Tus datos ocultos actualizados
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        // Inicializar de forma global nativa
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         const username = sessionStorage.getItem('game_username');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
@@ -64,10 +65,10 @@
 
         if (!username) { window.location.href = "./index.html"; }
 
-        // Registrar presencia en Firebase
-        const myPlayerRef = ref(db, `gameState/players/${pId}`);
-        set(myPlayerRef, { id: pId, name: username, isAdmin: isAdmin });
-        onDisconnect(myPlayerRef).remove();
+        // Registrar presencia en Firebase de forma clásica
+        const myPlayerRef = db.ref(`gameState/players/${pId}`);
+        myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
+        myPlayerRef.onDisconnect().remove();
 
         if (isAdmin) {
             document.getElementById('admin-controls').classList.remove('hidden');
@@ -76,8 +77,8 @@
 
         fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
 
-        // Escuchar base de datos en tiempo real
-        onValue(ref(db, 'gameState'), (snapshot) => {
+        // Escuchar cambios
+        db.ref('gameState').on('value', (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
 
@@ -110,7 +111,7 @@
         }
 
         window.cancelMatch = function() { 
-            set(ref(db, 'gameState/status'), 'LOGIN'); 
+            db.ref('gameState/status').set('LOGIN'); 
         }
 
         window.startMatch = function() {
@@ -128,8 +129,8 @@
                 let imgIndex = index % shuffledPool.length;
                 assignments[player.id] = shuffledPool[imgIndex];
             });
-            set(ref(db, 'gameState/assignments'), assignments);
-            set(ref(db, 'gameState/status'), 'GAME');
+            db.ref('gameState/assignments').set(assignments);
+            db.ref('gameState/status').set('GAME');
         }
     </script>
 </body>
