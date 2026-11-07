@@ -23,7 +23,6 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Ingresar al Juego</h1>
         <div class="form-group">
@@ -36,28 +35,19 @@
         </div>
         <button onclick="login()">Entrar al Lobby</button>
     </div>
-
     <script>
         const ADMIN_PASSWORD_HASH = "YWRtaW4xMDI5Mzg0NzU2";
         function login() {
             const nameInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value;
-
-            if (!nameInput) {
-                alert("Por favor introduce un nombre de jugador.");
-                return;
-            }
-
-            // Guardar datos temporalmente en la sesión del navegador
-            sessionStorage.setItem('game_username', nameInput);
+            if (!nameInput) { alert("Por favor introduce un nombre de jugador."); return; }
             
+            sessionStorage.setItem('game_username', nameInput);
             if (passInput === atob(ADMIN_PASSWORD_HASH)) {
                 sessionStorage.setItem('game_isAdmin', 'true');
             } else {
                 sessionStorage.setItem('game_isAdmin', 'false');
             }
-
-            // Redirigir físicamente a la página del lobby
             window.location.href = "./lobby.html";
         }
     </script>
