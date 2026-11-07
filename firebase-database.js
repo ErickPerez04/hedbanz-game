@@ -285,4 +285,3 @@ Sha1.prototype.digest = function () {
     }
 
 }));
-//# sourceMappingURL=firebase-database.js.map
