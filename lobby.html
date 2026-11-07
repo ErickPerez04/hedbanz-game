@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby del Juego</title>
+    <style>
+        :root {
+            --bg-color: #121214; --card-bg: #1a1a1e;
+            --success: #16a34a; --success-hover: #15803d;
+            --danger: #dc2626; --danger-hover: #b91c1c;
+            --text: #f3f4f6; --text-muted: #9ca3af;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 30px; border-radius: 12px; text-align: center; }
+        h1 { margin-bottom: 24px; font-size: 24px; }
+        h2 { margin-bottom: 16px; font-size: 18px; color: var(--text-muted); }
+        .player-list { list-style: none; background: #27272a; border-radius: 6px; padding: 10px; max-height: 200px; overflow-y: auto; margin-bottom: 20px; text-align: left; }
+        .player-item { padding: 8px 12px; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .player-item:last-child { border-bottom: none; }
+        .badge-admin { color: #f59e0b; font-weight: bold; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; color: white; }
+        .btn-success { background: var(--success); } .btn-success:hover { background: var(--success-hover); }
+        .btn-danger { background: var(--danger); } .btn-danger:hover { background: var(--danger-hover); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lobby del Juego</h1>
+        <h2>Jugadores Conectados</h2>
+        <ul id="player-list-container" class="player-list"></ul>
+
+        <div id="admin-controls" class="hidden">
+            <button class="btn-success" onclick="startMatch()">Iniciar Partida</button>
+            <button class="btn-danger" onclick="cancelMatch()">Cancelar Partida</button>
+        </div>
+        <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
+    </div>
+
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+    <script>
+        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhedWJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
+        firebase.initializeApp(JSON.parse(atob(datosOcultos)));
+        const db = firebase.database();
+
+        const username = sessionStorage.getItem('game_username');
+        const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
+        const pId = 'p_' + Math.random().toString(36).substr(2, 9);
+        let IMAGE_POOL_LIST = [];
+        let activePlayers = [];
+
+        if (!username) { window.location.href = "./index.html"; }
+
+        // Registrar presencia en Firebase
+        const myPlayerRef = db.ref(`gameState/players/${pId}`);
+        myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
+        myPlayerRef.onDisconnect().remove();
+
+        if (isAdmin) {
+            document.getElementById('admin-controls').classList.remove('hidden');
+            document.getElementById('player-wait-msg').classList.add('hidden');
+            db.ref('gameState/status').set('LOBBY');
+        }
+
+        // Cargar pool de imágenes desde la raíz
+        fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
+
+        // Escuchar base de datos
+        db.ref('gameState').on('value', (snapshot) => {
+            const state = snapshot.val();
+            if (!state) return;
+
+            if (state.players) {
+                activePlayers = Object.values(state.players);
+                renderLobby();
+            }
+
+            if (state.status === 'LOGIN') {
+                sessionStorage.clear();
+                window.location.href = "./index.html";
+            } else if (state.status === 'GAME' && state.assignments && state.assignments[pId]) {
+                // Pasar el nombre de la imagen asignada a la pantalla de juego
+                sessionStorage.setItem('my_assigned_image', state.assignments[pId]);
+                window.location.href = "./juego.html";
+            }
+        });
+
+        function renderLobby() {
+            const container = document.getElementById('player-list-container');
+            container.innerHTML = '';
+            activePlayers.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'player-item';
+                li.innerHTML = `<span>${p.name}</span> ${p.isAdmin ? '<span class="badge-admin">[ADMIN]</span>' : ''}`;
+                container.appendChild(li);
+            });
+        }
+
+        function cancelMatch() { db.ref('gameState').set({ status: 'LOGIN' }); }
+
+        function startMatch() {
+            if (activePlayers.length === 0 || IMAGE_POOL_LIST.length === 0) return;
+            let shuffledPool = [...IMAGE_POOL_LIST];
+            for (let i = shuffledPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
+            }
+            let assignments = {};
+            activePlayers.forEach((player, index) => {
+                let imgIndex = index % shuffledPool.length;
+                assignments[player.id] = shuffledPool[imgIndex];
+            });
+            db.ref('gameState/assignments').set(assignments);
+            db.ref('gameState/status').set('GAME');
+        }
+    </script>
+</body>
+</html>
