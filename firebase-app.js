@@ -1,1 +1,80 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=typeof globalThis!="undefined"?globalThis:e||self).firebase=t()}(this,(function(){"use strict";var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])})(t,n)};var t=function(){return(t=Object.assign||function(e){for(var t,n=1,r=arguments.length;n<r;n++)for(var o in t=arguments[n])Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o]);return e}).apply(this,arguments)};function n(t,n){function r(){this.constructor=t}e(t,n),t.prototype=null===n?Object.create(n):(r.prototype=n.prototype,new r)}var r=function(e,t,n,r){return new(n||(n=Promise))((function(o,i){function a(e){try{s(r.next(e))}catch(e){i(e)}}function c(e){try{s(r.throw(e))}catch(e){i(e)}}function s(e){var t;e.done?o(e.value):(t=e.value,t instanceof n?t:new n((function(e){e(t)}))).then(a,c)}s((r=r.apply(e,t||[])).next())}))};var o=function(e,t){var n,r,o,i,a={label:0,sent:function(){if(1&o)throw o;return o},trys:[],ops:[]};return i={next:c(0),throw:c(1),return:c(2)},"function"==typeof Symbol&&(i[Symbol.iterator]=function(){return this}),i;function c(i){return function(c){return function(i){if(n)throw new TypeError("Generator is already executing.");for(;a;)try{if(n=1,r&&(o=2&i?r.return:i?r.throw||((o=r.return)&&o.call(r),0):r.next)&&!(o=o.call(r,i)).done)return o;switch(r=0,o?(i=[2&i,o.value]):0,i){case 0:case 1:o=i;break;case 4:return a.label++,{value:i,done:false};case 5:a.label++,r=i,i=[],continue;case 7:i=a.ops.pop(),a.trys.pop(),continue;default:if(!(o=a.trys.length>0&&a.trys[a.trys.length-1])&&(6===i||2===i)){a=0;continue}if(3===i&&(!o||i>o&&i<o)){a.label=i;break}if(6===i&&a.label<o){a.label=o,o=i;break}if(o&&a.label<o){a.label=o,a.ops.push(i);break}o&&a.ops.pop(),a.trys.pop(),continue}i=t.call(e,a)}catch(e){i=[6,e],r=0}finally{n=o=0}if(5&i)throw i;return{value:i?i:void 0,done:true}}([i,c])}}};var i=function(e,t){for(var n=0,r=t.length,o=e.length;n<r;n++,o++)e[o]=t[n];return e};var a=function(e){const t=[];let n=0;for(let r=0;r<e.length;r++){let o=e.charCodeAt(r);o<128?t[n++]=o:o<2048?(t[n++]=o>>6|192,t[n++]=63&o|128):56320==(64512&o)&&r+1<e.length&&56320==(64512&e.charCodeAt(r+1))?(o=65536+((1023&o)<<10)+(1023&e.charCodeAt(++r)),t[n++]=o>>18|240,t[n++]=o>>12&63|128,t[n++]=o>>6&63|128,t[n++]=63&o|128):(t[n++]=o>>12|224,t[n++]=o>>6&63|128,t[n++]=63&o|128)}return t};var c=function(e){const t=[];let n=0,r=0;for(;n<e.length;){const o=e[n++];if(o<128)t[r++]=String.fromCharCode(o);else if(o>191&&o<224){const i=e[n++];t[r++]=String.fromCharCode((31&o)<<6|63&i)}else if(o>239&&o<365){const i=e[n++],a=e[n++],c=e[n++],s=(7&o)<<18|(63&i)<<12|(63&a)<<6|63&c;t[r++]=String.fromCharCode(55296+(s>>10)),t[r++]=String.fromCharCode(56320+(1023&s))}else{const i=e[n++],a=e[n++];t[r++]=String.fromCharCode((15&o)<<12|(63&i)<<6|63&a)}}return t.join("")};var s={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-._"},HAS_NATIVE_SUPPORT:"function"==typeof atob,encodeByteArray(e,t){if(!Array.isArray(e))throw Error("encodeByteArray takes an array as a parameter");this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_,r=[];for(let t=0;t<e.length;t+=3){const o=e[t],i=t+1<e.length,a=i?e[t+1]:0,c=t+2<e.length,s=c?e[t+2]:0,u=o>>2,l=(3&o)<<4|a>>4;let f=(15&a)<<2|s>>6,p=63&s;c||(p=64,i||(f=64)),r.push(n[u],n[l],n[f],n[p])}return r.join("")},encodeString(e,t){return this.HAS_NATIVE_SUPPORT&&!t?btoa(e):this.encodeByteArray(a(e),t)},decodeString(e,t){return this.HAS_NATIVE_SUPPORT&&!t?atob(e):c(this.decodeStringToByteArray(e,t))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_,r=[];for(let t=0;t<e.length;){const o=n[e.charAt(t++)],i=t<e.length,a=i?n[e.charAt(t)]:0;++t;const c=t<e.length,s=c?n[e.charAt(t)]:64;++t;const u=t<e.length,l=u?n[e.charAt(t)]:64;++t;if(null==o||null==a||null==s||null==l)throw Error();const f=o<<2|a>>4;if(r.push(f),64!==s){const e=a<<4&240|s>>2;if(r.push(e),64!==l){const e=s<<6&192|l;r.push(e)}}}return r},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={},this.charToByteMap_={},this.byteToCharMapWebSafe_={},this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++)this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e),this.charToByteMap_[this.byteToCharMap_[e]]=e,this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e),this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e,e>=this.ENCODED_VALS_BASE.length&&(this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e,this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e)}}};var u=function(e){const t=a(e);return s.encodeByteArray(t,true)};var l=function(e){return u(e).replace(/\./g,"")};var f=function(e){try{return s.decodeString(e,true)}catch(e){}return null};var p=function(){if(typeof self!=="undefined")return self;if(typeof window!=="undefined")return window;if(typeof global!=="undefined")return global;throw Error()};var d=class{constructor(){this.reject=()=>{},this.resolve=()=>{},this.promise=new Promise(((e,t)=>{this.resolve=e,this.reject=t}))}wrapCallback(e){return(t,n)=>{t?this.reject(t):this.resolve(n),"function"==typeof e&&(this.promise.catch((()=>{})),1===e.length?e(t):e(t,n))}}};class _ {constructor(e,t,n){this.name=e,this.instanceFactory=t,this.type=n,this.multipleInstances=false,this.serviceProps={},this.instantiationMode="LAZY",this.onInstanceCreated=null}setInstantiationMode(e){return this.instantiationMode=e,this}setMultipleInstances(e){return this.multipleInstances=e,this}setServiceProps(e){return this.serviceProps=e,this}setInstanceCreatedCallback(e){return this.onInstanceCreated=e,this}}class I{constructor(e,t){this.name=e,this.container=t,this.component=null,this.instances=new Map,this.instancesDeferred=new Map,this.instancesOptions=new Map,this.onInitCallbacks=new Map}get(e){const t=this.normalizeInstanceIdentifier(e);if(!this.instancesDeferred.has(t)){const e=new d;this.instancesDeferred.set(t,e),this.isInitialized(t)}return this.instancesDeferred.get(t).promise}getImmediate(e){const t=this.normalizeInstanceIdentifier(e?.identifier),n=e?.optional??false;if(this.isInitialized(t)){try{return this.getOrInitializeService({instanceIdentifier:t})}catch(e){if(n)return null;throw e}}else{if(n)return null;throw Error()}}getComponent(){return this.component}setComponent(e){this.component=e}clearInstance(e="[DEFAULT]"){this.instances.delete(e)}delete(){return Promise.resolve()}isComponentSet(){return null!=this.component}isInitialized(e="[DEFAULT]"){return this.instances.has(e)}getOptions(e="[DEFAULT]"){return this.instancesOptions.get(e)||{}}initialize(e={}){return this.getOrInitializeService({instanceIdentifier:"[DEFAULT]"})}onInit(e,t){return e(this.instances.get("[DEFAULT]")),(()=>{})}invokeOnInitCallbacks(e,t){}getOrInitializeService(e){let{instanceIdentifier:t,options:n={}}=e;return this.instances.get(t)||null}normalizeInstanceIdentifier(e="[DEFAULT]"){return"[DEFAULT]"}shouldAutoInitialize(){return true}}class O{constructor(e){this.name=e,this.providers=new Map}addComponent(e){const t=this.getProvider(e.name);t.setComponent(e)}addOrOverwriteComponent(e){this.addComponent(e)}getProvider(e){if(this.providers.has(e))return this.providers.get(e);const t=new I(e,this);return this.providers.set(e,t),t}getProviders(){return Array.from(this.providers.values())}}const C=[];class A{constructor(e){this.name=e,this._logLevel=2,this._logHandler=N,this._userLogHandler=null,C.push(this)}get logLevel(){return this._logLevel}set logLevel(e){this._logLevel=e}setLogLevel(e){}get logHandler(){return this._logHandler}set logHandler(e){this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){}log(...e){}info(...e){}warn(...e){}error(...e){}}function N(e,t,...n){}var k,D,S;const T=new A("@firebase/app");var x;const R={},P=new b("app","Firebase",R);class L{constructor(e,t,n){this._isDeleted=false,this._options=Object.assign({},e),this._config=Object.assign({},n),this._name=n.name,this._container=t,this.container.addComponent(new _("app",(()=>this),"PUBLIC"))}get options(){return this._options}get container(){return this._container}}const j=new Map,H=new Map,U=new Map;function $(e){return true}var z;var legacyNamespace=(function(){var e={_apps:new Map,SDK_VERSION:"10.7.1",app:function(e){return e=e||"[DEFAULT]",this._apps.get(e)},initializeApp:function(t,n){n=n||{};var r=n.name||"[DEFAULT]";if(this._apps.has(r))return this._apps.get(r);var o=new O(r),i={name:r,options:t,container:o};return o.addComponent(new _("app",(function(){return i}),"PUBLIC")),this._apps.set(r,i),i},INTERNAL:{registerComponent:function(e){U.set(e.name,e)},Component:_,getProvider:function(e,t){return e.container.getProvider(t)}}};return e})();return legacyNamespace}));
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.firebase = factory());
+})(this, (function () { 'use strict';
+
+    var Component = function (name, instanceFactory, type) {
+        this.name = name;
+        this.instanceFactory = instanceFactory;
+        this.type = type;
+    };
+
+    var Provider = function (name, container) {
+        this.name = name;
+        this.container = container;
+        this.instances = new Map();
+    };
+    Provider.prototype.getImmediate = function (options) {
+        return this.instances.get("[DEFAULT]") || null;
+    };
+    Provider.prototype.setComponent = function (component) {
+        this.component = component;
+    };
+
+    var ComponentContainer = function (name) {
+        this.name = name;
+        this.providers = new Map();
+    };
+    ComponentContainer.prototype.addComponent = function (component) {
+        var provider = this.getProvider(component.name);
+        provider.setComponent(component);
+    };
+    ComponentContainer.prototype.getProvider = function (name) {
+        if (this.providers.has(name)) return this.providers.get(name);
+        var provider = new Provider(name, this);
+        this.providers.set(name, provider);
+        return provider;
+    };
+
+    var firebaseNamespace = (function () {
+        var firebase = {
+            _apps: new Map(),
+            SDK_VERSION: "10.7.1",
+            app: function (name) {
+                name = name || "[DEFAULT]";
+                return this._apps.get(name);
+            },
+            initializeApp: function (options, config) {
+                config = config || {};
+                var name = config.name || "[DEFAULT]";
+                if (this._apps.has(name)) return this._apps.get(name);
+                
+                var container = new ComponentContainer(name);
+                var appInstance = {
+                    name: name,
+                    options: options,
+                    container: container
+                };
+                
+                container.addComponent(new Component("app", function () { return appInstance; }, "PUBLIC"));
+                this._apps.set(name, appInstance);
+                return appInstance;
+            },
+            INTERNAL: {
+                registerComponent: function (component) {
+                    if (firebase._apps.has("[DEFAULT]")) {
+                        firebase._apps.get("[DEFAULT]").container.addComponent(component);
+                    }
+                },
+                Component: Component,
+                getProvider: function (app, name) {
+                    return app.container.getProvider(name);
+                }
+            }
+        };
+        return firebase;
+    })();
+
+    return firebaseNamespace;
+}));
