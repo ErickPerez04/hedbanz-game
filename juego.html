@@ -31,8 +31,9 @@
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        // Inicializar Firebase pasándole el objeto directamente
+        const appInstance = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database(appInstance);
 
         const myImage = sessionStorage.getItem('my_assigned_image');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
