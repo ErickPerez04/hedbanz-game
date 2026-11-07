@@ -24,10 +24,10 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, get, child } from "https://gstatic.com";
+        import { initializeApp } from "https://unpkg.com";
+        import { getDatabase, ref, set, onValue, get, child } from "https://unpkg.com";
 
-        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTU1ZmJiZTM2MGI0MTg2YiJ9";
+        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
         const app = initializeApp(firebaseConfig);
@@ -65,7 +65,6 @@
             }
         });
 
-        // Exponer funciones del Administrador de manera modular
         window.nextRound = function() {
             fetch('./imagenes.json').then(res => res.json()).then(IMAGE_POOL_LIST => {
                 get(child(ref(db), 'gameState/players')).then((snap) => {
