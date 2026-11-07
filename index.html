@@ -3,145 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego Multiplayer Gratuito</title>
+    <title>Ingreso al Juego</title>
     <style>
         :root {
-            --bg-color: #121214;
-            --card-bg: #1a1a1e;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --success: #16a34a;
-            --success-hover: #15803d;
-            --danger: #dc2626;
-            --danger-hover: #b91c1c;
-            --text: #f3f4f6;
-            --text-muted: #9ca3af;
+            --bg-color: #121214; --card-bg: #1a1a1e;
+            --primary: #4f46e5; --primary-hover: #4338ca;
+            --text: #f3f4f6; --text-muted: #9ca3af;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
         h1 { margin-bottom: 24px; font-size: 24px; }
-        h2 { margin-bottom: 16px; font-size: 20px; color: var(--text-muted); }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #374151;
-            border-radius: 6px;
-            background: #27272a;
-            color: white;
-            font-size: 16px;
-        }
-
+        .form-group { text-align: left; margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--text-muted); }
+        input { width: 100%; padding: 12px; border: 1px solid #374151; border-radius: 6px; background: #27272a; color: white; font-size: 16px; }
         input:focus { outline: 2px solid var(--primary); }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { background: var(--success-hover); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: var(--danger-hover); }
-
-        .player-list {
-            list-style: none;
-            background: #27272a;
-            border-radius: 6px;
-            padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .player-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #374151;
-            display: flex;
-            justify-content: space-between;
-        }
-        .player-item:last-child { border-bottom: none; }
-        .badge-admin { color: #f59e0b; font-weight: bold; }
-
-        .admin-controls { display: grid; gap: 10px; margin-top: 20px; }
-
-        .fullscreen-view {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: black;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .game-img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .game-img.with-controls { max-height: 80vh; }
-
-        .game-controls {
-            position: absolute;
-            bottom: 40px;
-            display: flex;
-            gap: 20px;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        .hidden { display: none !important; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; background: var(--primary); color: white; margin-top: 10px; }
+        button:hover { background: var(--primary-hover); }
     </style>
 </head>
 <body>
-    <!-- PÁGINA 1: LOGIN -->
-    <div id="page-login" class="container">
+
+    <div class="container">
         <h1>Ingresar al Juego</h1>
         <div class="form-group">
             <label for="username">Nombre de Jugador</label>
@@ -151,89 +34,11 @@
             <label for="password">Contraseña (Solo Admin)</label>
             <input type="password" id="password" placeholder="Dejar vacío si eres jugador">
         </div>
-        <button class="btn-primary" onclick="login()">Entrar</button>
+        <button onclick="login()">Entrar al Lobby</button>
     </div>
-
-    <!-- PÁGINA 2: LOBBY -->
-    <div id="page-lobby" class="container hidden">
-        <h1>Lobby del Juego</h1>
-        <h2>Jugadores Conectados</h2>
-        <ul id="player-list-container" class="player-list"></ul>
-
-        <div id="admin-lobby-controls" class="admin-controls hidden">
-            <button class="btn-success" onclick="startMatch()">Iniciar Partida</button>
-            <button class="btn-danger" onclick="cancelMatch()">Cancelar Partida</button>
-        </div>
-        <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
-    </div>
-
-    <!-- PÁGINA 3: PANTALLA COMPLETA DE JUEGO -->
-    <div id="page-game" class="fullscreen-view hidden">
-        <img id="display-image" src="" alt="Imagen de la ronda" class="game-img">
-        
-        <div id="admin-game-controls" class="game-controls hidden">
-            <button class="btn-success" onclick="nextRound()">Nueva Ronda</button>
-            <button class="btn-danger" onclick="endSession()">Concluir Sesión</button>
-        </div>
-    </div>
-    <!-- 1. Cargar las librerías clásicas globales de Firebase vía CDN -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
 
     <script>
-        // Cadena de Firebase codificada para proteger el texto plano
-        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhedWJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
-        const firebaseConfig = JSON.parse(atob(datosOcultos));
-        const ADMIN_PASSWORD_HASH = "YWRtaW4xMDI5Mzg0NzU2"; 
-
-        let IMAGE_POOL_LIST = []; 
-        let myUser = { id: '', name: '', isAdmin: false };
-        let activePlayers = [];
-        let myPlayerRef = null;
-
-        // 2. Inicializar Firebase globalmente de forma segura
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        myUser.id = 'p_' + Math.random().toString(36).substr(2, 9);
-
-        // Cargar el JSON generado automáticamente por tu robot de GitHub Actions
-        async function loadImagesFromJSON() {
-            try {
-                const response = await fetch('./imagenes.json');
-                if (response.ok) {
-                    IMAGE_POOL_LIST = await response.json();
-                    console.log(`[Sistema] Se cargaron ${IMAGE_POOL_LIST.length} imágenes.`);
-                }
-            } catch (error) {
-                console.error("Error al leer imagenes.json:", error);
-            }
-        }
-        loadImagesFromJSON();
-
-        // Escuchar el estado de la base de datos en tiempo real
-        db.ref('gameState').on('value', (snapshot) => {
-            const state = snapshot.val();
-            if (!state) return;
-
-            if (state.players) {
-                activePlayers = Object.values(state.players);
-                renderLobby();
-            } else {
-                activePlayers = [];
-                renderLobby();
-            }
-
-            if (state.status === 'LOGIN' && myUser.name) {
-                resetToLoginLocal();
-            } else if (state.status === 'GAME' && myUser.name) {
-                if (state.assignments && state.assignments[myUser.id]) {
-                    showGameImage(state.assignments);
-                }
-            }
-        });
-
-        // 3. Función global de entrada vinculada directamente al click del HTML
+        const ADMIN_PASSWORD_HASH = "YWRtaW4xMDI5Mzg0NzU2";
         function login() {
             const nameInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value;
@@ -243,104 +48,17 @@
                 return;
             }
 
-            myUser.name = nameInput;
-            if (passInput === atob(ADMIN_PASSWORD_HASH)) myUser.isAdmin = true;
-
-            myPlayerRef = db.ref(`gameState/players/${myUser.id}`);
-            myPlayerRef.set(myUser);
-            myPlayerRef.onDisconnect().remove();
-
-            document.getElementById('page-login').classList.add('hidden');
-            document.getElementById('page-lobby').classList.remove('hidden');
-
-            if (myUser.isAdmin) {
-                document.getElementById('admin-lobby-controls').classList.remove('hidden');
-                document.getElementById('player-wait-msg').classList.add('hidden');
-                db.ref('gameState/status').set('LOBBY');
-            }
-        }
-
-        function renderLobby() {
-            const container = document.getElementById('player-list-container');
-            if (!container) return;
-            container.innerHTML = '';
-            activePlayers.forEach(p => {
-                const li = document.createElement('li');
-                li.className = 'player-item';
-                li.innerHTML = `<span>${p.name}</span> ${p.isAdmin ? '<span class="badge-admin">[ADMIN]</span>' : ''}`;
-                container.appendChild(li);
-            });
-        }
-
-        function cancelMatch() {
-            db.ref('gameState').set({ status: 'LOGIN' });
-        }
-
-        function endSession() {
-            db.ref('gameState').set({ status: 'LOGIN' });
-        }
-
-        function resetToLoginLocal() {
-            document.getElementById('page-lobby').classList.add('hidden');
-            document.getElementById('page-game').classList.add('hidden');
-            document.getElementById('admin-lobby-controls').classList.add('hidden');
-            document.getElementById('admin-game-controls').classList.add('hidden');
-            document.getElementById('player-wait-msg').classList.remove('hidden');
-            document.getElementById('page-login').classList.remove('hidden');
+            // Guardar datos temporalmente en la sesión del navegador
+            sessionStorage.setItem('game_username', nameInput);
             
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            myUser.name = '';
-            myUser.isAdmin = false;
-            myPlayerRef = null;
-        }
-
-        function startMatch() {
-            if (activePlayers.length === 0) return;
-            
-            if (IMAGE_POOL_LIST.length === 0) {
-                alert("La lista de imágenes está vacía en imagenes.json.");
-                return;
-            }
-
-            let shuffledPool = [...IMAGE_POOL_LIST];
-            for (let i = shuffledPool.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
-            }
-
-            let assignments = {};
-            activePlayers.forEach((player, index) => {
-                let imgIndex = index % shuffledPool.length;
-                assignments[player.id] = shuffledPool[imgIndex];
-            });
-
-            db.ref('gameState/assignments').set(assignments);
-            db.ref('gameState/status').set('GAME');
-        }
-
-        function showGameImage(assignments) {
-            const myImageName = assignments[myUser.id];
-            if (!myImageName) return;
-
-            document.getElementById('page-lobby').classList.add('hidden');
-            const gamePage = document.getElementById('page-game');
-            const imgElement = document.getElementById('display-image');
-            
-            imgElement.src = `./img/${myImageName}`;
-            gamePage.classList.remove('hidden');
-
-            if (myUser.isAdmin) {
-                imgElement.classList.add('with-controls');
-                document.getElementById('admin-game-controls').classList.remove('hidden');
+            if (passInput === atob(ADMIN_PASSWORD_HASH)) {
+                sessionStorage.setItem('game_isAdmin', 'true');
             } else {
-                imgElement.classList.remove('with-controls');
-                document.getElementById('admin-game-controls').classList.add('hidden');
+                sessionStorage.setItem('game_isAdmin', 'false');
             }
-        }
 
-        function nextRound() {
-            startMatch();
+            // Redirigir físicamente a la página del lobby
+            window.location.href = "./lobby.html";
         }
     </script>
 </body>
