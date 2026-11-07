@@ -23,12 +23,15 @@
         <button class="btn-danger" onclick="endSession()">Concluir Sesión</button>
     </div>
 
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get, child } from "https://gstatic.com";
+
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhedWJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
-        firebase.initializeApp(JSON.parse(atob(datosOcultos)));
-        const db = firebase.database();
+        const firebaseConfig = JSON.parse(atob(datosOcultos));
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
         const myImage = sessionStorage.getItem('my_assigned_image');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
@@ -44,7 +47,7 @@
             document.getElementById('admin-controls').classList.remove('hidden');
         }
 
-        db.ref('gameState').on('value', (snapshot) => {
+        onValue(ref(db, 'gameState'), (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
 
@@ -62,9 +65,10 @@
             }
         });
 
-        function nextRound() {
+        // Exponer funciones del Administrador de manera modular
+        window.nextRound = function() {
             fetch('./imagenes.json').then(res => res.json()).then(IMAGE_POOL_LIST => {
-                db.ref('gameState/players').once('value', (snap) => {
+                get(child(ref(db), 'gameState/players')).then((snap) => {
                     const playersObj = snap.val() || {};
                     const playersArr = Object.values(playersObj);
                     
@@ -79,12 +83,14 @@
                         assignments[player.id] = shuffledPool[imgIndex];
                     });
                     
-                    db.ref('gameState/assignments').set(assignments);
+                    set(ref(db, 'gameState/assignments'), assignments);
                 });
             });
         }
 
-        function endSession() { db.ref('gameState/status').set('LOGIN'); }
+        window.endSession = function() { 
+            set(ref(db, 'gameState/status'), 'LOGIN'); 
+        }
     </script>
 </body>
 </html>
