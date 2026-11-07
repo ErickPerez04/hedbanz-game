@@ -38,16 +38,14 @@
         <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
     </div>
 
-    <!-- Cargar Firebase App y Database con SDK Clásico via CDN unpkg libre de módulos -->
-    <script src="https://unpkg.com"></script>
-    <script src="https://unpkg.com"></script>
+    <!-- Importación local propia libre de bloqueos de rastreo (Tracking Prevention) -->
+    <script src="./firebase-app.js"></script>
+    <script src="./firebase-database.js"></script>
 
     <script>
-        // Tus datos ocultos actualizados
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
-        // Inicializar de forma global nativa
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -65,7 +63,6 @@
 
         if (!username) { window.location.href = "./index.html"; }
 
-        // Registrar presencia en Firebase de forma clásica
         const myPlayerRef = db.ref(`gameState/players/${pId}`);
         myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
         myPlayerRef.onDisconnect().remove();
@@ -77,7 +74,6 @@
 
         fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
 
-        // Escuchar cambios
         db.ref('gameState').on('value', (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
