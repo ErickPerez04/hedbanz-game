@@ -17,9 +17,7 @@
     </style>
 </head>
 <body>
-
     <img id="display-image" src="" alt="Imagen de la ronda" class="game-img">
-    
     <div id="admin-controls" class="game-controls hidden">
         <button class="btn-success" onclick="nextRound()">Nueva Ronda</button>
         <button class="btn-danger" onclick="endSession()">Concluir Sesión</button>
@@ -34,8 +32,9 @@
 
         const myImage = sessionStorage.getItem('my_assigned_image');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
+        const pId = sessionStorage.getItem('game_player_id');
 
-        if (!myImage) { window.location.href = "./lobby.html"; }
+        if (!myImage || !pId) { window.location.href = "./lobby.html"; }
 
         const imgElement = document.getElementById('display-image');
         imgElement.src = `./img/${myImage}`;
@@ -45,31 +44,47 @@
             document.getElementById('admin-controls').classList.remove('hidden');
         }
 
-        // Escuchar cambios de estado globales
-        db.ref('gameState/status').on('value', (snapshot) => {
-            const status = snapshot.val();
-            if (status === 'LOBBY') {
+        db.ref('gameState').on('value', (snapshot) => {
+            const state = snapshot.val();
+            if (!state) return;
+
+            if (state.status === 'LOBBY') {
                 sessionStorage.removeItem('my_assigned_image');
                 window.location.href = "./lobby.html";
-            } else if (status === 'LOGIN') {
+            } else if (state.status === 'LOGIN') {
                 sessionStorage.clear();
                 window.location.href = "./index.html";
+            } else if (state.status === 'GAME' && state.assignments && state.assignments[pId]) {
+                if (state.assignments[pId] !== myImage) {
+                    sessionStorage.setItem('my_assigned_image', state.assignments[pId]);
+                    window.location.reload();
+                }
             }
         });
 
-        // Forzar recarga si el administrador mezcla otra ronda (cambia la asignación pero el estado sigue siendo GAME)
-        db.ref('gameState/assignments').on('value', () => {
-            // El lobby actualizará las asignaciones en background, redirigimos brevemente para refrescar la foto
-            db.ref(`gameState/status`).once('value', (snap) => {
-                if(snap.val() === 'GAME') {
-                    // Volvemos al lobby un milisegundo para capturar la nueva asignación de forma limpia
-                    window.location.href = "./lobby.html";
-                }
+        function nextRound() {
+            fetch('./imagenes.json').then(res => res.json()).then(IMAGE_POOL_LIST => {
+                db.ref('gameState/players').once('value', (snap) => {
+                    const playersObj = snap.val() || {};
+                    const playersArr = Object.values(playersObj);
+                    
+                    let shuffledPool = [...IMAGE_POOL_LIST];
+                    for (let i = shuffledPool.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
+                    }
+                    let assignments = {};
+                    playersArr.forEach((player, index) => {
+                        let imgIndex = index % shuffledPool.length;
+                        assignments[player.id] = shuffledPool[imgIndex];
+                    });
+                    
+                    db.ref('gameState/assignments').set(assignments);
+                });
             });
-        });
+        }
 
-        function nextRound() { db.ref('gameState/status').set('LOBBY'); }
-        function endSession() { db.ref('gameState').set({ status: 'LOGIN' }); }
+        function endSession() { db.ref('gameState/status').set('LOGIN'); }
     </script>
 </body>
 </html>
