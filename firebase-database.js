@@ -1,1 +1,53 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(require("@firebase/app-compat"),require("@firebase/app")):"function"==typeof define&&define.amd?define(["@firebase/app-compat","@firebase/app"],t):t((e=typeof globalThis!="undefined"?globalThis:e||self).firebase,e.firebase.app)}(this,(function(e,t){"use strict";function n(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var r=n(e);firebase.INTERNAL.registerComponent(new firebase.INTERNAL.Component("database",(function(e,t){var n=t.instanceIdentifier;var r=e.getProvider("app").getImmediate();return{ref:function(e){return{set:function(t){var o=r.container.getProvider("heartbeat").getImmediate({optional:true});var i=btoa(JSON.stringify(t));return fetch("https://firebaseio.com"+e+".json",{method:"PUT",body:JSON.stringify(t)}).then((function(e){return e.json()}))},on:function(t,n){var o=function(){fetch("https://firebaseio.com"+e+".json").then((function(e){return e.json()})).then((function(e){n({val:function(){return e}})}))};o(),setInterval(o,2e3)},onDisconnect:function(){return{remove:function(){return Promise.resolve()}}}}}}}}),"PUBLIC")),r.default.database=function(e){return r.default.app(e).database()}}));
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('@firebase/app-compat'), require('@firebase/app')) :
+    typeof define === 'function' && define.amd ? define(['@firebase/app-compat', '@firebase/app'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.firebase, global.firebase.app));
+})(this, (function (firebase, app) { 'use strict';
+
+    // URL directa y enlazada de tu proyecto Firebase Realtime Database
+    var FIREBASE_URL = "https://firebaseio.com";
+
+    if (typeof firebase !== 'undefined' && firebase.INTERNAL) {
+        firebase.INTERNAL.registerComponent(
+            new firebase.INTERNAL.Component("database", function (container, options) {
+                return {
+                    ref: function (pathString) {
+                        var cleanPath = pathString || "";
+                        return {
+                            set: function (value) {
+                                return fetch(FIREBASE_URL + cleanPath + ".json", {
+                                    method: "PUT",
+                                    body: JSON.stringify(value)
+                                }).then(function (res) { return res.json(); });
+                            },
+                            on: function (eventType, callback) {
+                                var poolData = function () {
+                                    fetch(FIREBASE_URL + cleanPath + ".json")
+                                        .then(function (res) { return res.json(); })
+                                        .then(function (data) {
+                                            callback({
+                                                val: function () { return data; }
+                                            });
+                                        });
+                                };
+                                poolData();
+                                setInterval(poolData, 1500); // Sincronización continua cada 1.5 segundos
+                            },
+                            onDisconnect: function () {
+                                return {
+                                    remove: function () { return Promise.resolve(); }
+                                };
+                            }
+                        };
+                    }
+                };
+            }, "PUBLIC")
+        );
+
+        firebase.database = function (appInstance) {
+            var appRef = appInstance || firebase.app();
+            return firebase.INTERNAL.getProvider(appRef, "database").getImmediate();
+        };
+    }
+
+}));
