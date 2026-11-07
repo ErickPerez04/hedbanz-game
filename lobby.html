@@ -25,10 +25,6 @@
         .btn-danger { background: var(--danger); } .btn-danger:hover { background: var(--danger-hover); }
         .hidden { display: none !important; }
     </style>
-        <!-- CDN de Firebase App (Núcleo) -->
-    <script src="https://gstatic.com"></script>
-    <!-- CDN de Realtime Database -->
-    <script src="https://gstatic.com"></script>
 </head>
 <body>
     <div class="container">
@@ -42,15 +38,18 @@
         <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
     </div>
 
-    <script src="https://unpkg.com"></script>
-    <script src="https://unpkg.com"></script>
+    <!-- Importación local propia libre de bloqueos de rastreo -->
+    <script src="./firebase-app.js"></script>
+    <script src="./firebase-database.js"></script>
 
     <script>
         const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        // Inicializar Firebase
+        const appInstance = firebase.initializeApp(firebaseConfig);
+        // Llamar a la base de datos de forma directa pasando la app
+        const db = firebase.database(appInstance);
 
         const username = sessionStorage.getItem('game_username');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
@@ -66,20 +65,19 @@
 
         if (!username) { window.location.href = "./index.html"; }
 
-        // Registrar presencia de forma segura verificando la existencia de la referencia
-        if (db && typeof db.ref === 'function') {
-            const myPlayerRef = db.ref(`gameState/players/${pId}`);
-            myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
-            myPlayerRef.onDisconnect().remove();
-        }
+        // Registrar presencia del jugador en Firebase
+        const myPlayerRef = db.ref(`gameState/players/${pId}`);
+        myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
 
         if (isAdmin) {
             document.getElementById('admin-controls').classList.remove('hidden');
             document.getElementById('player-wait-msg').classList.add('hidden');
         }
 
+        // Cargar nombres de imágenes desde imagenes.json
         fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
 
+        // Escuchar el estado de la base de datos en tiempo real
         db.ref('gameState').on('value', (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
