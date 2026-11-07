@@ -38,11 +38,13 @@
         <p id="player-wait-msg" style="color: var(--text-muted);">Esperando que el Administrador inicie la partida...</p>
     </div>
 
+    <!-- Importación modular unpkg libre de restricciones CORS -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, onDisconnect } from "https://gstatic.com";
+        import { initializeApp } from "https://unpkg.com";
+        import { getDatabase, ref, set, onValue, onDisconnect } from "https://unpkg.com";
 
-        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTU1ZmJiZTM2MGI0MTg2YiJ9";
+        // Tus datos ocultos actualizados y corregidos
+        const datosOcultos = "eyJhcGlLZXkiOiJBSXphU3lEZXI5T1M1aTV6TmdnanVucEFaM2pKRVRIV0M2MVV4Z3MiLCJhdXRoRG9tYWluIjoiaGVkYmFuei1hNjczOC5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaGVkYmFuei1hNjczOC1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJoZWRiYW56LWE2NzM4Iiwic3RvcmFnZUJ1Y2tldCI6ImhlZGJhbnotYTY3MzguZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNzM3MTAyMDU5NzYyIiwiYXBwSWQiOiIxOjczNzEwMjA1OTc2Mjp3ZWI6YTk5ZDk3ZTV1ZmJiZTM2MGI0MThiYiJ9";
         const firebaseConfig = JSON.parse(atob(datosOcultos));
         
         const app = initializeApp(firebaseConfig);
@@ -74,7 +76,7 @@
 
         fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
 
-        // Escuchar base de datos
+        // Escuchar base de datos en tiempo real
         onValue(ref(db, 'gameState'), (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
@@ -107,7 +109,6 @@
             });
         }
 
-        // Exponer funciones globales para los botones onclick
         window.cancelMatch = function() { 
             set(ref(db, 'gameState/status'), 'LOGIN'); 
         }
