@@ -27,12 +27,10 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Lobby del Juego</h1>
         <h2>Jugadores Conectados</h2>
         <ul id="player-list-container" class="player-list"></ul>
-
         <div id="admin-controls" class="hidden">
             <button class="btn-success" onclick="startMatch()">Iniciar Partida</button>
             <button class="btn-danger" onclick="cancelMatch()">Cancelar Partida</button>
@@ -49,13 +47,18 @@
 
         const username = sessionStorage.getItem('game_username');
         const isAdmin = sessionStorage.getItem('game_isAdmin') === 'true';
-        const pId = 'p_' + Math.random().toString(36).substr(2, 9);
+        
+        let pId = sessionStorage.getItem('game_player_id');
+        if (!pId) {
+            pId = 'p_' + Math.random().toString(36).substr(2, 9);
+            sessionStorage.setItem('game_player_id', pId);
+        }
+
         let IMAGE_POOL_LIST = [];
         let activePlayers = [];
 
         if (!username) { window.location.href = "./index.html"; }
 
-        // Registrar presencia en Firebase
         const myPlayerRef = db.ref(`gameState/players/${pId}`);
         myPlayerRef.set({ id: pId, name: username, isAdmin: isAdmin });
         myPlayerRef.onDisconnect().remove();
@@ -63,13 +66,10 @@
         if (isAdmin) {
             document.getElementById('admin-controls').classList.remove('hidden');
             document.getElementById('player-wait-msg').classList.add('hidden');
-            db.ref('gameState/status').set('LOBBY');
         }
 
-        // Cargar pool de imágenes desde la raíz
         fetch('./imagenes.json').then(res => res.json()).then(data => IMAGE_POOL_LIST = data).catch(()=> {});
 
-        // Escuchar base de datos
         db.ref('gameState').on('value', (snapshot) => {
             const state = snapshot.val();
             if (!state) return;
@@ -77,13 +77,15 @@
             if (state.players) {
                 activePlayers = Object.values(state.players);
                 renderLobby();
+            } else {
+                activePlayers = [];
+                renderLobby();
             }
 
             if (state.status === 'LOGIN') {
                 sessionStorage.clear();
                 window.location.href = "./index.html";
             } else if (state.status === 'GAME' && state.assignments && state.assignments[pId]) {
-                // Pasar el nombre de la imagen asignada a la pantalla de juego
                 sessionStorage.setItem('my_assigned_image', state.assignments[pId]);
                 window.location.href = "./juego.html";
             }
@@ -100,10 +102,13 @@
             });
         }
 
-        function cancelMatch() { db.ref('gameState').set({ status: 'LOGIN' }); }
+        function cancelMatch() { db.ref('gameState/status').set('LOGIN'); }
 
         function startMatch() {
-            if (activePlayers.length === 0 || IMAGE_POOL_LIST.length === 0) return;
+            if (activePlayers.length === 0 || IMAGE_POOL_LIST.length === 0) {
+                alert("Esperando jugadores o imágenes...");
+                return;
+            }
             let shuffledPool = [...IMAGE_POOL_LIST];
             for (let i = shuffledPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
